@@ -2307,6 +2307,7 @@ function animateLoop(t) {
 
         renderer.setScissorTest(false);
     }
+    requestAnimationFrame(animateLoop);
 }
 
 window.addEventListener('resize', updateCameras);
@@ -2818,3 +2819,4 @@ if (navWrapper) navWrapper.style.display = 'none';
 
 initTablets();
 controls.enabled = true;
+requestAnimationFrame(animateLoop);
