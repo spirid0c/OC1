@@ -1,4 +1,4 @@
-﻿import * as THREE from 'three';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // ---- Settings / Meta ----
@@ -2759,6 +2759,42 @@ const btnPrecip = document.getElementById('btn-precip');
 function switchDataMode(mode) {
     PARAMS.displayMode = mode;
 
+    // Toggle classes active
+    if (btnPwat) btnPwat.classList.toggle('active', mode === 'pwat');
+    if (btnPrecip) btnPrecip.classList.toggle('active', mode === 'precip');
+
+    // Style dynamique de l'interface
+    const accent = (mode === 'pwat') ? '#4a9eff' : '#a1aab5';
+    document.documentElement.style.setProperty('--accent-blue', accent);
+
+    // Mise a jour Shader
+    material.uniforms.u_mode.value = (mode === 'pwat') ? 0.0 : 1.0;
+    updateFrame();
+}
+
+if (btnPwat) btnPwat.addEventListener('click', () => switchDataMode('pwat'));
+if (btnPrecip) btnPrecip.addEventListener('click', () => switchDataMode('precip'));
+
+// 4. Update Slider Visual (Track fill)
+if (sliderTime) {
+    sliderTime.addEventListener('input', () => {
+        const val = (sliderTime.value / sliderTime.max) * 100;
+        const trackFill = document.querySelector('.slider-track-fill');
+        if (trackFill) trackFill.style.width = `${val}%`;
+    });
+}
+
+// Initialisation finale
+markers = [];
+if (typeof CITIES_DB !== 'undefined') {
+    CITIES_DB.forEach(city => {
+        createMarker(city.lat, city.lon, city.name, city.cc, true);
+    });
+}
+
+if (typeof initComparisonSlots === 'function') initComparisonSlots();
+updateFrame();
+
 // ==========================================
 // ARCADE TABLET INITIALIZATION
 // ==========================================
@@ -2776,7 +2812,9 @@ function initTablets() {
     }, 500);
     PARAMS.showWind = true;
 }
+
 const navWrapper = document.getElementById('narrative-wrapper');
 if (navWrapper) navWrapper.style.display = 'none';
+
 initTablets();
 controls.enabled = true;
