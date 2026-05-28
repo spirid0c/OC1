@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IsoGSM 3D — Atmospheric water vapor tracer dynamics">
+    <title>IsoGSM — Atmospheric Vapor Tracer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,300;0,400;1,300&family=Syncopate:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "netcdfjs": "https://esm.sh/netcdfjs",
+                "grib2js": "https://esm.sh/grib2js"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <audio id="sfx-ping" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <script>
+        if (window.location.protocol === 'file:') {
+            alert('Protocol error: serve via a local HTTP server (Live Server, python -m http.server, etc.)');
+        }
+    </script>
+
+    <!-- THE 3D BACKGROUND -->
+    <main id="main-content">
+        <div id="canvas-container"></div>
+        <div id="canvas-2d-container" style="display:none;">
+            <canvas id="canvas-2d"></canvas>
+        </div>
+    </main>
+
+    <!-- NARRATIVE SCROLLYTELLING -->
+    <div id="narrative-wrapper">
+        <section id="hero-section">
+            <h1>Raindrop's Journey Across the Globe</h1>
+            <button class="btn-enter-sim" id="btn-enter-direct">Explore Simulation</button>
+        </section>
+
+        <section id="story-section">
+            <div class="story-container">
+
+                <div class="story-block">
+                    <p>Can a single raindrop falling in Japan reach all the way to Brazil—the exact opposite side of the Earth? How long does it take to travel across the globe, and what shifting patterns does it form across the sky?</p>
+                </div>
+
+                <div class="story-block">
+                    <h2>Tracking the Atmospheric Path of Moisture</h2>
+                    <p>To trace this moisture—which behaves like streams of ink diffusing across the sky—the Yoshimura Lab simulated global moisture paths using IsoGSM, a Global Spectral Model integrated with water isotope tracking.</p>
+                    <p>By isolating and tracking the air evaporating from the Japan region (30°-45° N, 130°-145° E), the team ran global simulations to map where and when this moisture travels, mixes, and precipitates until it finally arrives at the exact opposite side of the world in Brazil (30°-45° S, 35°-50° W).</p>
+                    <p>The simulation incorporates a specific mixing rule: every time the tracked moisture falls as rain along its route, it mixes completely with the local water on the ground. When it rises back into the sky through evaporation, it continues its journey as a more diluted blend. This method allows scientists to measure exactly how much of the original water from Japan survives the long trip to Brazil, and how much of it gets diluted by the rest of the world along the way.</p>
+                    <figure class="story-image">
+                        <img src="isogsm-grid.jpg.png" alt="IsoGSM Model Visualization" onerror="this.style.display='none';">
+                    </figure>
+                </div>
+
+                <div class="story-block">
+                    <h2>Winter Departures Are Fast, Summer Departures Are Slow</h2>
+                    <p>Water leaving Japan in the winter reaches Brazil much faster than water leaving in the summer. On average, the winter journey takes around 40 days, while the summer journey stretches to 70 days or longer.</p>
+                    
+                    <div class="season-grid">
+                        <div class="season-col">
+                            <h3>Summer Departure</h3>
+                            <img src="summer-flow.jpg.png" alt="Summer atmospheric flows" onerror="this.style.display='none';">
+                        </div>
+                        <div class="season-col">
+                            <h3>Winter Departure</h3>
+                            <img src="winter-flow.jpg.png" alt="Winter atmospheric flows" onerror="this.style.display='none';">
+                        </div>
+                    </div>
+
+                    <p>This seasonal difference is driven by the movement of the Intertropical Convergence Zone (ITCZ), a massive global belt of low pressure. During the summer, the ITCZ shifts northward, pulling powerful trade winds across the equator from the Southern Hemisphere into the Northern Hemisphere. This acts like an invisible barrier in the air, making it difficult for summer moisture from Japan to cross the equator and move south toward Brazil, severely delaying its journey.</p>
+                </div>
+
+                <div class="story-block">
+                    <h2>Redefining Distance From the Perspective of Water</h2>
+                    <p>This model remaps the connection between Japan and the rest of the world, proving that atmospheric travel times are often entirely independent of physical distance.</p>
+                    <p><strong>The Summer Contrast:</strong> Even though Taiwan is physically much closer to Japan, it takes an average of 11 days for Japanese moisture to travel there in the summer. Meanwhile, driven by the Westerlies and the North Pacific Jet Stream, that same moisture can rocket across the vast Pacific Ocean and reach Western Canada in just 7 days.</p>
+                    <p><strong>The Winter Shift:</strong> These atmospheric patterns flip dramatically with the seasons. In the winter, the powerful East Asian Winter Monsoon creates a direct, high-speed aerial highway, dropping the travel time from Japan to Taiwan down to just 3 days.</p>
+
+                    <p>By looking at the world through the travel of a raindrop, we begin to see a planet intimately connected as a dynamic Earth system. It is a world where the heat of the oceans, the topography of the land, and the shifting currents of the atmosphere continuously interact—weaving the entire globe into a single, living, water-circulating organism.</p>
+                </div>
+
+                <div class="story-block">
+                    <p>Louison Prevost-Bonnefille, Hyunjung Kim<br>Xiaoyang Li, Kei Yoshimura</p>
+                </div>
+
+                <div class="launch-container">
+                    <button id="btn-enter-story">Explore simulation</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- WORKBENCH UI -->
+    <div id="app-ui" style="opacity: 0; pointer-events: none; transition: opacity 1.5s ease;">
+        <div id="arcade-viseur">
+            <div class="viseur-box">
+                <div class="viseur-target">[ + ]</div>
+                <img id="viseur-flag" src="" width="30" style="display:none; border-radius:3px;">
+                <div id="viseur-text">Tournez le bouton...</div>
+                <div class="viseur-help">PRESS PEDAL TO LOCK</div>
+            </div>
+        </div>
+
+        <!-- TOP BAR -->
+        <div id="top-bar">
+            <div class="top-left">
+                <div class="tabs">
+                    <button id="btn-connect-cockpit" class="btn-minimal"
+                        style="color: #00f2ff; border: 1px solid #00f2ff; margin-bottom: 15px;">
+                        🔌 Connect Cockpit
+                    </button>
+                </div>
+            </div>
+
+            <div class="top-center">
+                <div id="archive-specific-ui" style="display: flex; gap: 30px;">
+                    <!-- Les infos Tracer et Day ont été supprimées pour un design plus minimaliste -->
+                </div>
+                <div id="local-specific-ui" style="display:none; gap: 30px;">
+                    <!-- Dynamic select -->
+                </div>
+                <div id="upload-view" style="display:none; gap: 15px; align-items: center;">
+                    <button id="btn-back-archives" class="btn-minimal">← Back</button>
+                    <button id="btn-browse" class="btn-minimal">Browse Files</button>
+                    <input type="file" id="file-input" style="display: none;">
+                    <span style="font-size: 10px; color: #888;">(.nc, .bin, .ft supported)</span>
+                </div>
+            </div>
+
+            <div class="top-right" style="display: flex; gap: 15px; align-items: center;">
+                <div id="archive-data-group">
+                    <button id="toggle-data" class="btn-minimal">Season: Summer</button>
+                </div>
+                <button id="btn-toggle-data-type" class="btn-minimal" style="color: var(--text-accent);">Mode:
+                    Vapor</button>
+                <button id="btn-toggle-wind" class="btn-minimal" style="color: var(--text-secondary);">Wind:
+                    OFF</button>
+                <button id="btn-toggle-view" class="btn-minimal">View: 3D</button>
+                <button id="btn-toggle-autorotate" class="btn-minimal">Auto-Rotate: ON</button>
+                <button id="btn-lang" class="btn-minimal">EN / JP</button>
+            </div>
+        </div>
+
+        <!-- BOTTOM CONSOLE -->
+        <div id="bottom-console">
+            <!-- PLAYBACK -->
+            <div id="playback-console">
+                <span id="date-display">01 JUL 2017</span>
+                <button id="btn-play" class="btn-minimal">▶ Play</button>
+                <div class="slider-wrap" style="flex-grow: 1;">
+                    <input type="range" id="time-slider" min="0" max="90" value="0" aria-label="Time Slider" title="Time Slider">
+                </div>
+            </div>
+
+            <!-- RANKING -->
+            <div id="ranking-horizontal">
+                <div class="city-slot" id="slot-0"></div>
+                <div class="city-slot" id="slot-1"></div>
+                <div class="city-slot" id="slot-2"></div>
+                <div class="city-slot" id="slot-3"></div>
+                <div class="city-slot" id="slot-4"></div>
+            </div>
+        </div>
+
+        <!-- LEGEND (Floating Bottom Left) -->
+        <div class="legend" style="position: absolute; bottom: 100px; left: 20px;">
+            <div class="legend-title">Atmospheric Vapor [kg/m²]</div>
+            <div class="color-blocks">
+                <div style="background:#ffffff; color:#000;">Tr</div>
+                <div style="background:#f2f9ff"></div>
+                <div style="background:#e5f4ff"></div>
+                <div style="background:#cceaff"></div>
+                <div style="background:#b2e0ff"></div>
+                <div style="background:#99d1ff"></div>
+                <div style="background:#84c1ff"></div>
+                <div style="background:#70b2ff"></div>
+                <div style="background:#60a5f9"></div>
+                <div style="background:#5199ef"></div>
+                <div style="background:#478ee5"></div>
+                <div style="background:#337ad1"></div>
+                <div style="background:#2e70c4"></div>
+                <div style="background:#1c467a; color:#fff;">&gt;10</div>
+            </div>
+            <div class="color-labels">
+                <span>0.001</span>
+                <span>0.05</span>
+                <span>10.0</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="main.js?v=2023"></script>
+</body>
+
+</html>
