@@ -1808,6 +1808,7 @@ if (btnToggleAutoRotate) {
         btnToggleAutoRotate.style.color = autoRotateEnabled ? 'var(--text-primary)' : 'var(--text-secondary)';
     });
 }
+if (btnToggleView) {
 btnToggleView.addEventListener('click', () => {
     PARAMS.viewMode = (PARAMS.viewMode + 1) % 3;
     const labels = [TRANSLATIONS[currentLang].view3D, TRANSLATIONS[currentLang].view2D, TRANSLATIONS[currentLang].viewSplit];
@@ -1836,6 +1837,7 @@ btnToggleView.addEventListener('click', () => {
     applyLegendColors(VAPOR_COLORS);
     updateFrame();
 });
+}
 
 // Initialization
 applyLegendColors(VAPOR_COLORS);
