@@ -2136,6 +2136,43 @@ function animateLoop(t) {
 
         camera3D.position.setFromSpherical(currentSph);
     }
+    if (btnToggleView) {
+    btnToggleView.addEventListener('click', () => {
+        PARAMS.viewMode = (PARAMS.viewMode + 1) % 3;
+        const labels = [TRANSLATIONS[currentLang].view3D, TRANSLATIONS[currentLang].view2D, TRANSLATIONS[currentLang].viewSplit];
+        btnToggleView.innerText = labels[PARAMS.viewMode];
+        if (PARAMS.viewMode === 0) {
+            camera3D.position.set(0, 0, 2.9);
+            camera3D.lookAt(0, 0, 0);
+        } else if (PARAMS.viewMode === 1) {
+            // Vue 2D
+        } else if (PARAMS.viewMode === 2) {
+            camera3D.position.set(0, 0, 2.9);
+            camera3D.lookAt(0, 0, 0);
+        }
+        updateCameras();
+        
+        const canvas2DContainer = document.getElementById('canvas-2d-container');
+        if (canvas2DContainer) {
+            if (PARAMS.viewMode === 1 || PARAMS.viewMode === 2) {
+                canvas2DContainer.style.display = 'flex';
+                if (PARAMS.viewMode === 1) {
+                    canvas2DContainer.style.width = '100%';
+                    canvas2DContainer.style.borderRight = 'none';
+                    canvas2DContainer.style.top = '0';
+                    canvas2DContainer.style.bottom = '0';
+                } else {
+                    canvas2DContainer.style.width = '50%';
+                    canvas2DContainer.style.borderRight = '2px solid rgba(255,255,255,0.2)';
+                    canvas2DContainer.style.top = '50px';
+                    canvas2DContainer.style.bottom = '60px';
+                }
+            } else {
+                canvas2DContainer.style.display = 'none';
+            }
+        }
+    });
+}
 
     controls.update();
 
@@ -2143,7 +2180,7 @@ function animateLoop(t) {
         material.uniforms.u_time.value = t * 0.001;
 
         if (isPlaying) {
-            // Calcule Ã  quel point on est proche du prochain jour (0.0 Ã  1.0)
+            // Calcule Ã quele point on est proche du prochain jour (0.0 Ã 1.0)
             const progress = (t - lastFrameTime) / msPerFrame;
             material.uniforms.u_lerp.value = Math.min(1.0, progress);
         } else {
