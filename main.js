@@ -2779,7 +2779,7 @@ if (btnConnectCockpit) {
             // ⚠️ VITESSE CORRIGÉE : Calée exactement sur le "Serial.begin(115200);" de ton Arduino
             await serialPort.open({ baudRate: 115200 });
 
-            btnConnectCockpit.innerText = "⚡ COCKPIT CONNECTED";
+            btnConnectCockpit.innerText = "✔️ HMI CONNECTED";
             btnConnectCockpit.style.color = "#00ff88";
             btnConnectCockpit.style.borderColor = "#00ff88";
 
