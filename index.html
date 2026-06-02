@@ -204,7 +204,123 @@
 
     </div>
 
-    <script type="module" src="main.js?v=2025"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const translations = {
+                "Raindrop's Journey Across the Globe": "地球を巡る雨粒の旅",
+                "Explore Simulation": "シミュレーションを探索する",
+                "Explore simulation": "シミュレーションを探索する",
+                "Tracking the Atmospheric Path of Moisture": "水蒸気の軌跡をたどる",
+                "Winter Departures Are Fast, Summer Departures Are Slow": "冬の出発は速く、夏の出発は遅い",
+                "Summer Departure": "夏の出発",
+                "Winter Departure": "冬の出発",
+                "Redefining Distance From the Perspective of Water": "水の視点から距離を再定義する"
+            };
+            
+            const pDict = [
+                {
+                    en: "Can a single raindrop falling in Japan reach all the way to Brazil",
+                    jp: "日本に降った一粒の雨が、地球の真裏であるブラジルまで届くことはあるのだろうか？地球を横断するのにどれくらいの時間がかかり、空でどのような模様を描くのだろうか？"
+                },
+                {
+                    en: "To trace this moisture",
+                    jp: "空に広がるインクの筋のように振る舞うこの水蒸気を追跡するため、芳村研究室は水同位体追跡を統合した全球スペクトルモデル（IsoGSM）を使用して、全球の水蒸気経路をシミュレーションした。"
+                },
+                {
+                    en: "By isolating and tracking the air evaporating from the Japan region",
+                    jp: "日本地域（北緯30度～45度、東経130度～145度）から蒸発する大気を分離して追跡し、この水蒸気がどこへ移動し、混ざり合い、降水となって最終的に地球の真裏であるブラジル（南緯30度～45度、西経35度～50度）に到着するまでをマッピングした。"
+                },
+                {
+                    en: "The simulation incorporates a specific mixing rule:",
+                    jp: "このシミュレーションには特定の混合ルールが組み込まれている。追跡された水蒸気が経路上で雨として降るたびに、地表の局地的な水と完全に混ざり合う。蒸発して再び空に昇る時には、より薄まった混合物として旅を続ける。この手法により、日本からの元の水がどれだけブラジルまでの長い旅を生き残るか、そしてその過程で世界の他の水とどれだけ混ざり合うかを正確に測定できる。"
+                },
+                {
+                    en: "Water leaving Japan in the winter reaches Brazil much faster than water leaving in the summer.",
+                    jp: "冬に日本を出発する水は、夏に出発する水よりもはるかに早くブラジルに到達する。平均して、冬の旅は約40日かかるのに対し、夏の旅は70日以上にも及ぶ。"
+                },
+                {
+                    en: "This seasonal difference is driven by the movement of the Intertropical Convergence Zone (ITCZ)",
+                    jp: "この季節的な違いは、巨大な低圧帯である熱帯収束帯（ITCZ）の移動によって引き起こされる。夏の間、ITCZは北上し、南半球から北半球へと赤道を越える強力な貿易風を引き寄せる。これが空気中の見えない障壁となり、日本からの夏期の水蒸気が赤道を越えて南のブラジルへ移動するのを困難にし、その旅を大幅に遅らせる。"
+                },
+                {
+                    en: "This model remaps the connection between Japan and the rest of the world",
+                    jp: "このモデルは日本と世界とのつながりを再構築し、大気中の移動時間が物理的な距離とは全く無関係であることが多いことを証明している。"
+                },
+                {
+                    en: "<strong>The Summer Contrast:</strong>",
+                    jp: "<strong>夏の対比：</strong> 台湾は物理的には日本に非常に近いが、夏の間に日本の水蒸気がそこに移動するには平均11日かかる。一方、偏西風と北太平洋ジェット気流に乗れば、同じ水蒸気が広大な太平洋を横断し、わずか7日でカナダ西部に到達できる。"
+                },
+                {
+                    en: "<strong>The Winter Shift:</strong>",
+                    jp: "<strong>冬の転換：</strong> これらの大気パターンは季節によって劇的に変化する。冬には強力な東アジアの冬季モンスーンが直接的な高速ルートを作り出し、日本から台湾への移動時間をわずか3日に短縮する。"
+                },
+                {
+                    en: "By looking at the world through the travel of a raindrop,",
+                    jp: "雨粒の旅を通して世界を見ることで、私たちは地球がダイナミックなシステムとして密接に繋がっていることに気づく。それは、海の熱、陸地の地形、そして移り変わる大気の流れが絶えず相互作用し、地球全体が一つの生きている水循環システムとして織りなされている世界である。"
+                }
+            ];
+
+            const wrapper = document.getElementById('narrative-wrapper');
+            if (wrapper) {
+                const btn = document.createElement('button');
+                btn.innerHTML = 'EN / JP';
+                btn.style.position = 'fixed';
+                btn.style.top = '30px';
+                btn.style.right = '40px';
+                btn.style.zIndex = '10000';
+                btn.style.background = 'rgba(0,0,0,0.5)';
+                btn.style.color = 'white';
+                btn.style.border = '1px solid rgba(255,255,255,0.4)';
+                btn.style.padding = '8px 16px';
+                btn.style.cursor = 'pointer';
+                btn.style.borderRadius = '5px';
+                btn.style.fontFamily = "'Syncopate', sans-serif";
+                btn.style.letterSpacing = "2px";
+                btn.style.backdropFilter = "blur(10px)";
+                btn.style.transition = "all 0.3s ease";
+                
+                btn.onmouseover = () => { btn.style.background = 'rgba(255,255,255,0.2)'; };
+                btn.onmouseout = () => { btn.style.background = 'rgba(0,0,0,0.5)'; };
+                
+                wrapper.appendChild(btn);
+
+                let isJp = false;
+                const elems = Array.from(wrapper.querySelectorAll('h1, h2, h3, p, button')).filter(e => e !== btn);
+                
+                elems.forEach(el => {
+                    el.dataset.en = el.innerHTML;
+                });
+
+                btn.addEventListener('click', () => {
+                    isJp = !isJp;
+                    elems.forEach(el => {
+                        const enText = el.dataset.en;
+                        if (isJp) {
+                            let matched = false;
+                            for (let key in translations) {
+                                if (enText.includes(key)) {
+                                    el.innerHTML = translations[key];
+                                    matched = true;
+                                    break;
+                                }
+                            }
+                            if (!matched) {
+                                for (let pd of pDict) {
+                                    if (enText.includes(pd.en)) {
+                                        el.innerHTML = pd.jp;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            el.innerHTML = el.dataset.en;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <script type="module" src="main.js?v=2026"></script>
 </body>
 
 </html>
