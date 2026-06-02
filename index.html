@@ -303,8 +303,8 @@
                         for (let i = 0; i < length; i++) {
                             const from = oldText[i] || '';
                             const to = plainText[i] || '';
-                            const start = Math.floor(Math.random() * 20);
-                            const end = start + Math.floor(Math.random() * 20) + 10;
+                            const start = Math.floor(Math.random() * 60);
+                            const end = start + Math.floor(Math.random() * 60) + 40;
                             this.queue.push({ from, to, start, end });
                         }
                         cancelAnimationFrame(this.frameRequest);
@@ -320,7 +320,7 @@
                                 complete++;
                                 output += to;
                             } else if (this.frame >= start) {
-                                if (!char || Math.random() < 0.28) {
+                                if (!char || Math.random() < 0.1) {
                                     char = this.randomChar();
                                     this.queue[i].char = char;
                                 }
@@ -381,7 +381,7 @@
             }
         });
     </script>
-    <script type="module" src="main.js?v=2028"></script>
+    <script type="module" src="main.js?v=2029"></script>
 </body>
 
 </html>
