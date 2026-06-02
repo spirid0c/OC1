@@ -318,8 +318,8 @@
                         const length = Math.max(oldText.length, plainText.length);
                         this.queue = [];
                         
-                        // 4 secondes = 240 frames (à 60fps)
-                        const speed = 240 / length; 
+                        // 3 secondes = 180 frames (à 60fps)
+                        const speed = 180 / length; 
                         
                         for (let i = 0; i < length; i++) {
                             const from = oldText[i] || '';
@@ -408,7 +408,7 @@
             }
         });
     </script>
-    <script type="module" src="main.js?v=2034"></script>
+    <script type="module" src="main.js?v=2035"></script>
 </body>
 
 </html>
