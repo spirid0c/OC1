@@ -288,8 +288,8 @@
                 class TextScramble {
                     constructor(el) {
                         this.el = el;
-                        // Pool de caractères maîtrisé (alphanumérique + Katakana basique)
-                        this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789アイウエオカキクケコサシスセソタチツテト';
+                        // Règle 2 : Pool de caractères "Half-Width"
+                        this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ';
                         this.update = this.update.bind(this);
                     }
                     setText(newText) {
@@ -299,13 +299,11 @@
                         const plainText = tempDiv.textContent || tempDiv.innerText;
                         const oldText = this.el.textContent || this.el.innerText;
                         
-                        // --- 1. Verrouillage de la hauteur (Anti-Shake) ---
-                        // Cloner l'élément pour calculer sa hauteur future invisible
+                        // --- 1. Verrouillage Absolu (Hard Lock) ---
                         const clone = this.el.cloneNode(false);
                         clone.innerHTML = newText;
                         clone.style.position = 'absolute';
                         clone.style.visibility = 'hidden';
-                        // Fixer la largeur identique pour avoir le bon nombre de retours à la ligne
                         clone.style.width = getComputedStyle(this.el).width;
                         this.el.parentNode.appendChild(clone);
                         
@@ -313,13 +311,13 @@
                         const futureHeight = clone.offsetHeight;
                         this.el.parentNode.removeChild(clone);
                         
-                        this.el.style.minHeight = Math.max(currentHeight, futureHeight) + 'px';
+                        this.el.style.height = Math.max(currentHeight, futureHeight) + 'px';
+                        this.el.style.overflow = 'hidden';
                         // --------------------------------------------------
 
                         const length = Math.max(oldText.length, plainText.length);
                         this.queue = [];
                         
-                        // --- 2. Décodage Progressif (Cascade) ---
                         // 5 secondes = 300 frames (à 60fps)
                         const speed = 300 / length; 
                         
@@ -358,8 +356,9 @@
                         this.el.textContent = output;
                         if (complete === this.queue.length) {
                             this.el.innerHTML = this.finalHtml;
-                            // Retirer le verrouillage de hauteur une fois terminé
-                            this.el.style.minHeight = '';
+                            // Règle 3 : Nettoyage Total
+                            this.el.style.height = '';
+                            this.el.style.overflow = '';
                         } else {
                             this.frameRequest = requestAnimationFrame(this.update);
                             this.frame++;
