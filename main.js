@@ -801,6 +801,41 @@ function updateLanguageUI() {
 
     updateFrame();
 
+    // Dynamic text replacements
+    const viseurText = document.getElementById('viseur-text');
+    const viseurHelp = document.querySelector('.viseur-help');
+    if (viseurText && (!CITIES_DB[hoveredCityIndex] || gameState !== 'SELECT')) {
+        viseurText.innerText = t.viseurDefault;
+    }
+    if (viseurHelp) viseurHelp.innerText = t.viseurHelp;
+
+    const btnConnectCockpit = document.getElementById('btn-connect-cockpit');
+    if (btnConnectCockpit) {
+        if (btnConnectCockpit.innerText.includes("CONNECTED") || btnConnectCockpit.innerText.includes("接続済み")) {
+            btnConnectCockpit.innerText = t.hmiConnected;
+        } else if (btnConnectCockpit.innerText.includes("FAILED") || btnConnectCockpit.innerText.includes("接続失敗")) {
+            btnConnectCockpit.innerText = t.hmiFailed;
+        } else {
+            btnConnectCockpit.innerHTML = `🕹️ ${t.hmiConnect}`;
+        }
+    }
+
+    for (let i = 0; i < 5; i++) {
+        const slotName = document.getElementById(`city-name-${i}`);
+        if (slotName && (slotName.innerText === 'WAITING...' || slotName.innerText === '待機中...' || slotName.innerText === 'En attente...')) {
+            slotName.innerText = t.waitingSlot;
+        }
+        const dayEl = document.getElementById(`day-${i}`);
+        if (dayEl) {
+            if (dayEl.innerText.includes('Day ') || dayEl.innerText.includes('日')) {
+                const numMatch = dayEl.innerText.match(/\d+/);
+                if (numMatch) {
+                    dayEl.innerText = currentLang === 'EN' ? `Day ${numMatch[0]}` : `${numMatch[0]}${t.dayLabel}`;
+                }
+            }
+        }
+    }
+    
 }
 
 
