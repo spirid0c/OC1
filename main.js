@@ -59,7 +59,20 @@ const TRANSLATIONS = {
         alertLocalSeason: "To change season in Local Import mode, please drag the corresponding new .ft files.",
         legendVapor: "Atmospheric Vapor Tracer [kg/m²]",
         legendRain: "Tracer rain > 0.1 mm/day",
-        months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+        months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+        viseurDefault: "Turn the knob...",
+        viseurHelp: "PRESS PEDAL TO LOCK",
+        waitingFiles: "WAITING FOR FILES...",
+        scanningFile: "SCANNING FILE...",
+        scanningError: "SCANNING ERROR",
+        decodingFiles: "DECODING {n} FILES...",
+        decodingProgress: "DECODING: {i} / {n}...",
+        filesDecoded: "{n} .ft file(s) decoded",
+        filesLoaded: "{n} file(s) loaded",
+        dayLabel: "Day ",
+        waitingLabel: "Waiting...",
+        hmiConnected: "✔️ HMI CONNECTED",
+        hmiFailed: "❌ CONNECTION FAILED"
     },
     JP: {
         archives: "アーカイブ",
@@ -90,7 +103,20 @@ const TRANSLATIONS = {
         alertLocalSeason: "ローカルインポートモードで季節を変更するには、対応する新しい.ftファイルをドラッグしてください。",
         legendVapor: "水蒸気トレーサー [kg/m²]",
         legendRain: "トレーサー降水量 > 0.1 mm/day",
-        months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+        months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+        viseurDefault: "ノブを回して...",
+        viseurHelp: "ペダルを踏んでロック",
+        waitingFiles: "ファイルを待機中...",
+        scanningFile: "ファイルをスキャン中...",
+        scanningError: "スキャンエラー",
+        decodingFiles: "{n}個のファイルをデコード中...",
+        decodingProgress: "デコード中: {i} / {n}...",
+        filesDecoded: "{n}個の.ftファイルをデコードしました",
+        filesLoaded: "{n}個のファイルを読み込みました",
+        dayLabel: "日 ",
+        waitingLabel: "待機中...",
+        hmiConnected: "✔️ HMI 接続済み",
+        hmiFailed: "❌ 接続失敗"
     }
 };
 let currentLang = 'EN';
@@ -943,7 +969,13 @@ function updateViseur() {
     const viseurText = document.getElementById('viseur-text');
     const viseurFlag = document.getElementById('viseur-flag');
 
-    if (viseurText) viseurText.innerText = city.name;
+    if (viseurText) {
+        if (city) {
+            viseurText.innerText = city.name;
+        } else {
+            viseurText.innerText = TRANSLATIONS[currentLang].viseurDefault;
+        }
+    }
     if (viseurFlag) {
         viseurFlag.src = `https://flagcdn.com/w40/${city.cc.toLowerCase()}.png`;
         viseurFlag.style.display = 'block';
@@ -2575,7 +2607,7 @@ async function processMultipleGRIBWithVercel(files, paramId = 150) {
         }
 
         const datasetLabel = document.getElementById('dataset-label');
-        if (datasetLabel) datasetLabel.innerText = `${framesLoaded} .ft file(s) decoded`;
+        if (datasetLabel) datasetLabel.innerText = TRANSLATIONS[currentLang].filesDecoded.replace('{n}', framesLoaded);
 
         if (typeof uploadView !== 'undefined' && uploadView) uploadView.style.display = 'none';
         if (typeof commonUI !== 'undefined' && commonUI) commonUI.style.display = 'block';
@@ -2682,7 +2714,7 @@ async function readMultipleBinFiles(files) {
         isLocalData = true;
 
         const datasetLabel = document.getElementById('dataset-label');
-        if (datasetLabel) datasetLabel.innerText = `${totalFrames} file(s) loaded`;
+        if (datasetLabel) datasetLabel.innerText = TRANSLATIONS[currentLang].filesLoaded.replace('{n}', totalFrames);
         if (uploadView) uploadView.style.display = 'none';
         if (commonUI) commonUI.style.display = 'block';
 
