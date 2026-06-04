@@ -4887,9 +4887,7 @@ function parseCockpitData(dataStr) {
 
         }
 
-        smoothedSlider += (sliderVal - smoothedSlider) * 0.15;
-
-        if (Math.abs(sliderVal - lastSliderRaw) > 2) {
+        if (Math.abs(sliderVal - lastSliderRaw) > 10) {
 
             lastSliderRaw = sliderVal;
 
@@ -4913,27 +4911,34 @@ function parseCockpitData(dataStr) {
 
         }
 
-        // Convertit la valeur 0-1023 vers le nombre de frames de la simulation
+        // Isolation du contrôle visuel : appliqué QUE SI le système est en pause
+        if (!isPlaying) {
 
-        let targetFrame = Math.floor((smoothedSlider / 1024) * PARAMS.frames);
+            smoothedSlider += (sliderVal - smoothedSlider) * 0.15;
 
-        targetFrame = Math.max(0, Math.min(PARAMS.frames - 1, targetFrame));
+            // Convertit la valeur 0-1023 vers le nombre de frames de la simulation
 
-        // On applique la frame si elle change
+            let targetFrame = Math.floor((smoothedSlider / 1024) * PARAMS.frames);
 
-        if (targetFrame !== PARAMS.currentFrame) {
+            targetFrame = Math.max(0, Math.min(PARAMS.frames - 1, targetFrame));
 
-            PARAMS.currentFrame = targetFrame;
+            // On applique la frame si elle change
 
-            // Réalignement des flèches de vent pour suivre la timeline
+            if (targetFrame !== PARAMS.currentFrame) {
 
-            if (typeof alignParticlesToFrame === 'function') {
+                PARAMS.currentFrame = targetFrame;
 
-                alignParticlesToFrame(PARAMS.currentFrame);
+                // Réalignement des flèches de vent pour suivre la timeline
+
+                if (typeof alignParticlesToFrame === 'function') {
+
+                    alignParticlesToFrame(PARAMS.currentFrame);
+
+                }
+
+                updateFrame();
 
             }
-
-            updateFrame();
 
         }
 
