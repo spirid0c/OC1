@@ -4883,7 +4883,9 @@ function parseCockpitData(dataStr) {
 
     if (sliderMatch && gameState === 'SIMULATE') {
 
-        const sliderVal = parseInt(sliderMatch[1]);
+        let sliderVal = parseInt(sliderMatch[1]);
+
+        sliderVal = 1023 - sliderVal;
 
         if (smoothedSlider === -1) {
 
@@ -4971,6 +4973,14 @@ function parseCockpitData(dataStr) {
     if (dataStr.includes("CMD:TOGGLE_ARROWS")) {
 
         const btn = document.getElementById('btn-toggle-wind');
+
+        if (btn) btn.click();
+
+    }
+
+    if (dataStr.includes("CMD:TOGGLE_SEASON")) {
+
+        const btn = document.getElementById('toggle-data');
 
         if (btn) btn.click();
 
