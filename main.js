@@ -32,6 +32,8 @@ let joystickData = { x: 512, y: 512 };
 
 let lastSliderRaw = -1;
 
+let smoothedSlider = -1;
+
 let hitRegistry = [];
 
 let isCinematicMode = true;
@@ -4879,53 +4881,59 @@ function parseCockpitData(dataStr) {
 
         const sliderVal = parseInt(sliderMatch[1]);
 
-        // Filtre anti-bruit musclé (> 25) car la fonction map() de l'Arduino amplifie le signal
+        if (smoothedSlider === -1) {
 
-        if (Math.abs(sliderVal - lastSliderRaw) > 25) {
+            smoothedSlider = sliderVal;
+
+        }
+
+        smoothedSlider += (sliderVal - smoothedSlider) * 0.15;
+
+        if (Math.abs(sliderVal - lastSliderRaw) > 2) {
 
             lastSliderRaw = sliderVal;
 
-            // Convertit la valeur 0-1023 vers le nombre de frames de la simulation
+            // MAGIE UX : Auto-Pause dès qu'on manipule la timeline
 
-            let targetFrame = Math.floor((sliderVal / 1024) * PARAMS.frames);
+            if (isPlaying) {
 
-            targetFrame = Math.max(0, Math.min(PARAMS.frames - 1, targetFrame));
+                isPlaying = false;
 
-            // On applique la frame si elle change
+                const playBtn = document.getElementById('btn-play');
 
-            if (targetFrame !== PARAMS.currentFrame) {
+                if (playBtn) {
 
-                // MAGIE UX : Auto-Pause dès qu'on manipule la timeline
+                    playBtn.innerText = TRANSLATIONS[currentLang].play || "▶ Play";
 
-                if (isPlaying) {
-
-                    isPlaying = false;
-
-                    const playBtn = document.getElementById('btn-play');
-
-                    if (playBtn) {
-
-                        playBtn.innerText = TRANSLATIONS[currentLang].play || "▶ Play";
-
-                        playBtn.classList.remove('playing');
-
-                    }
+                    playBtn.classList.remove('playing');
 
                 }
-
-                PARAMS.currentFrame = targetFrame;
-
-                // Réalignement des flèches de vent pour suivre la timeline
-
-                if (typeof alignParticlesToFrame === 'function') {
-
-                    alignParticlesToFrame(PARAMS.currentFrame);
-
-                }
-
-                updateFrame();
 
             }
+
+        }
+
+        // Convertit la valeur 0-1023 vers le nombre de frames de la simulation
+
+        let targetFrame = Math.floor((smoothedSlider / 1024) * PARAMS.frames);
+
+        targetFrame = Math.max(0, Math.min(PARAMS.frames - 1, targetFrame));
+
+        // On applique la frame si elle change
+
+        if (targetFrame !== PARAMS.currentFrame) {
+
+            PARAMS.currentFrame = targetFrame;
+
+            // Réalignement des flèches de vent pour suivre la timeline
+
+            if (typeof alignParticlesToFrame === 'function') {
+
+                alignParticlesToFrame(PARAMS.currentFrame);
+
+            }
+
+            updateFrame();
 
         }
 
