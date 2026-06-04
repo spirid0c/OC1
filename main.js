@@ -34,6 +34,8 @@ let lastSliderRaw = -1;
 
 let smoothedSlider = -1;
 
+let isSliderIgnored = false;
+
 let hitRegistry = [];
 
 let isCinematicMode = true;
@@ -2977,6 +2979,8 @@ btnPlay.addEventListener('click', () => {
 
     if (isPlaying) {
 
+        isSliderIgnored = true;
+
         lastFrameTime = performance.now(); // Solid sync on Play
 
         btnPlay.classList.add('playing');
@@ -4887,9 +4891,11 @@ function parseCockpitData(dataStr) {
 
         }
 
-        if (Math.abs(sliderVal - lastSliderRaw) > 10) {
+        if (Math.abs(sliderVal - lastSliderRaw) > 25) {
 
             lastSliderRaw = sliderVal;
+
+            isSliderIgnored = false;
 
             // MAGIE UX : Auto-Pause dès qu'on manipule la timeline
 
@@ -4912,7 +4918,7 @@ function parseCockpitData(dataStr) {
         }
 
         // Isolation du contrôle visuel : appliqué QUE SI le système est en pause
-        if (!isPlaying) {
+        if (!isPlaying && !isSliderIgnored) {
 
             smoothedSlider += (sliderVal - smoothedSlider) * 0.15;
 
@@ -4948,7 +4954,7 @@ function parseCockpitData(dataStr) {
 
     if (dataStr.includes("CMD:TOGGLE_PLAY")) {
 
-        const btn = document.getElementById('toggle-data');
+        const btn = document.getElementById('btn-play');
 
         if (btn) btn.click();
 
