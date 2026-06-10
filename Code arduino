@@ -1,0 +1,56 @@
+// --- BROCHES (PINS) ---
+const int pinPot = A4;    // Potentiomètre Rotatif (Villes)
+const int pinSlider = A0; // Potentiomètre Rectiligne (Timeline / Jours)
+
+const int btnSeasonPin = 7; // <-- INTERRUPTEUR MÉTAL (Saison)
+const int btnModePin = 5;   // Bouton Mode (Vapeur/Pluie)
+const int btnWindPin = 2;   // Bouton Vent (Flèches)
+
+// --- VARIABLES D'ÉTAT ---
+int lastSeasonBtnState = HIGH; 
+int lastModeBtnState = HIGH;
+int lastWindBtnState = HIGH;
+
+void setup() {
+  Serial.begin(115200); 
+  pinMode(btnSeasonPin, INPUT_PULLUP);
+  pinMode(btnModePin, INPUT_PULLUP); 
+  pinMode(btnWindPin, INPUT_PULLUP);
+}
+
+void loop() {
+  int potVal = analogRead(pinPot);
+  
+  // Lecture simple du slider (l'inversion se fera côté JS)
+  int sliderRaw = analogRead(pinSlider); 
+  int sliderVal = constrain(sliderRaw, 0, 1023); 
+
+  // 1. INTERRUPTEUR SAISON (Été/Hiver) -> Bascule
+  int currSeason = digitalRead(btnSeasonPin);
+  bool seasonTrig = (currSeason != lastSeasonBtnState); 
+  lastSeasonBtnState = currSeason;
+
+  // 2. BOUTON MODE
+  int currMode = digitalRead(btnModePin);
+  bool modeTrig = (currMode == LOW && lastModeBtnState == HIGH);
+  lastModeBtnState = currMode;
+
+  // 3. BOUTON VENT
+  int currWind = digitalRead(btnWindPin);
+  bool windTrig = (currWind == LOW && lastWindBtnState == HIGH);
+  lastWindBtnState = currWind;
+
+  // --- ENVOI DE LA TRAME SÉRIE ---
+  Serial.print("JOY:512,512"); 
+  Serial.print("|POT:");
+  Serial.print(potVal);
+  Serial.print("|SLIDER:");
+  Serial.print(sliderVal); 
+
+  if (seasonTrig) Serial.print("|CMD:TOGGLE_SEASON");
+  if (modeTrig) Serial.print("|CMD:TOGGLE_MODE");
+  if (windTrig) Serial.print("|CMD:TOGGLE_ARROWS");
+
+  Serial.println();
+  delay(33); 
+}
